@@ -229,7 +229,7 @@ string CapturarEntrada(string mensaje, char tipo) //tipo == n -- si la entrada e
 	do{
 	//se repetira hasta que el usuario ingrese una entrada valida 
 		cout << mensaje;
-		cin >> entrada; //Tome la entrada por pantalla
+		getline(cin, entrada); //Tome la entrada por pantalla
 		correcta = ValidarEntrada(entrada, tipo); //Llama a la funcion para validar la entrada
 		if(correcta == false) //si no es valida
 		{
