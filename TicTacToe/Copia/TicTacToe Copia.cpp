@@ -5,7 +5,7 @@ Materia - Estructuras de Datos y Algoritmos II
 
 Asunto: 
 
-Realizar un programa que simule el juego de Tic Tac Toe.
+Programar un juego de Tic Tac Toe para dos jugadores.
 
 Autor:  Pazzis Paulino 1103790
         Huan Hao Wu 1104326
@@ -75,7 +75,7 @@ int main(){
 void ValoresIniciales(){ //resetea el juego
 	
 	int contador = 1;
-	for(int i = 0; i < 3; i++){
+	for(int i = 0; i < 3; i++){ //limpiar arreglo jugada
 		for(int j = 0; j < 3; j++){
 			jugada[i][j] = contador + '0';
 			contador++;
