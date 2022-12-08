@@ -35,19 +35,18 @@ int fila = 0, columna = 0; //Posicion de una jugada
 string nombreJugador1, nombreJugador2; //nombres de los jugadores
 int contadorJugadas = 0;
 
-
 //prototipo de metodos y funciones
 string ImprimirNombreJugador(int numero);
 void ComenzarJugada();
-void ImprimirJuego();
-void ImprimirTablero();
+void ImprimirJuego(); //imprime las posiciones del arreglo
+void ImprimirTablero(); //imprime el banner del tablero
 void SeleccionarPosicion();
 void CambiarTurno();
 bool ExaminarJugada(); //devuelve true si hubo un empato o un ganador, false si todavía no se determina un ganador o empate
 void ImprimirResultadoJuego();
 
 void Gotoxy(short x, short y);
-string CapturarEntrada(string mensaje, char tipo);
+string CapturarEntrada(string mensaje, char tipo); //tipo especifica la validacion a realizar, n es numerico y a es alfabetico
 bool ValidarEntrada(string entrada, char tipo);
 
 //funcion principal
@@ -80,7 +79,7 @@ void ComenzarJugada(){
 		cout << "El jugador 1 "<< nombreJugador1 << " le seguira con el simbolo O" << endl;
 	}
 	system("pause");
-    bool fin = false;
+    bool fin = false; //variable para indicar si el juego se acabo
     while(true){ // Se repetira hasta que haya un empate o un ganador
         ImprimirTablero();
         SeleccionarPosicion();
@@ -123,12 +122,18 @@ void Gotoxy(short x, short y) // se invoca la funcion GoToXY la cual admite dos 
 }
 
 void ImprimirJuego(){ // Funcion que muestra la formadel juego
-	for (int i = 0; i < 3; i++){
+	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE); //toma control de la consola
+
+	for (int i = 0; i < 3; i++){ //recorre las posiciones de la matriz
 		for (int j = 0; j < 3; j++){
 			Gotoxy(3 + i*7,3 + j*2);
+			if(jugada[j][i] == 'O') SetConsoleTextAttribute(h, 2); //Verde
+			else if(jugada[j][i] == 'X') SetConsoleTextAttribute(h, 4); //Rojo
+			else SetConsoleTextAttribute(h, 7); //Blanco
 			cout << jugada[j][i];
 		}	
 	}
+	SetConsoleTextAttribute(h, 7); //Blanco
 	Gotoxy(0,10);
 }
 string ImprimirNombreJugador(int numero){
@@ -139,9 +144,8 @@ string ImprimirNombreJugador(int numero){
 void SeleccionarPosicion(){ // Funcion donde indicamos en que posicion el jugador quiere jugar
 	string mensaje = ImprimirNombreJugador(turnoJugador) + ", indique la posicion en donde desea jugar: ";
 	int digito;
-	do{
-		digito = stoi(CapturarEntrada(mensaje, 'n')); //captura la posicion
-	
+	do{	
+		digito = stoi(CapturarEntrada(mensaje, 'n')); //captura la posicion numerica
 		if(digito > 6){
 			fila = 3;
 			columna = digito - 6;	
@@ -163,7 +167,7 @@ void SeleccionarPosicion(){ // Funcion donde indicamos en que posicion el jugado
 			break;
 		}	
 	}while(true);
-	jugada[fila-1][columna-1] = simbolo;
+	jugada[fila - 1][columna - 1] = simbolo;
 	contadorJugadas++;
 }
 
@@ -182,11 +186,14 @@ void CambiarTurno(){
 
 bool ExaminarJugada(){
 	for(int i = 0; i < 3; i++){
-        if(jugada[i][0] == jugada[i][1] && jugada[i][0] == jugada[i][2] || jugada[0][i] == jugada[1][i] && jugada[0][i] == jugada[2][i]){
-            return true; // para verificar de forma horizontal y vertical si se ha logrado alguna combinacion, en caso de existir una combinacion, se retorna true
+        if(jugada[i][0] == jugada[i][1] && jugada[i][0] == jugada[i][2] || //verifica si hay combinaciones en horizontal
+			jugada[0][i] == jugada[1][i] && jugada[0][i] == jugada[2][i]){ //verifica si hay combinaciones en vertical
+            return true; //en caso de existir una combinacion, se retorna true
         }
     }
-    if(jugada[0][0] == jugada[1][1] && jugada[1][1] == jugada[2][2] || jugada[0][2] == jugada[1][1] && jugada[1][1] == jugada[2][0]){
+    
+	if(jugada[0][0] == jugada[1][1] && jugada[1][1] == jugada[2][2] || 
+		jugada[0][2] == jugada[1][1] && jugada[1][1] == jugada[2][0]){
         return true; // Para verificar de forma diagonal si se ha logrado alguna combinacion, en caso de existir una combinacion, se retorna true
     }
     
@@ -207,10 +214,10 @@ bool ExaminarJugada(){
 void ImprimirResultadoJuego(){ // funcion para determinar el ganador o si quedo empate
 
     if(empate){
-    	cout << "Increible, es un empate. " << nombreJugador1 << " y " << nombreJugador2 << " Ambos son buenos jugadores."<< endl << endl;
+    	cout << "Vaya vaya, es un empate. " << nombreJugador1 << " y " << nombreJugador2 << " Ambos son buenos jugadores."<< endl << endl;
 	}
 	else{
-		cout << "Wow, " << ImprimirNombreJugador(turnoJugador) << " eres el ganador/a del juego. Felicidades!"<< endl << endl;
+		cout << "Wow!, " << ImprimirNombreJugador(turnoJugador) << " eres el ganador/a del juego. Felicidades!"<< endl << endl;
 	}
     system("pause");
 }
@@ -231,14 +238,12 @@ string CapturarEntrada(string mensaje, char tipo) //tipo == n -- si la entrada e
 		}
 		cout << endl;
 	} while (correcta == false); //repetir mientras que la entrada no sea valida
-	return entrada; //retorna la entrada convertida en entero
+	return entrada; //retorna la entrada
 }
 
 bool ValidarEntrada(string entrada, char tipo){ //true - es valida       false - no es valida 
 												//tipo == n -- si la entrada en numerica, tipo == a si la entrada es alfabetica 
-	
 	if(tipo == 'n'){ //validar una entrada numerica
-		
 		if(entrada.length() > 1){
 			cout << "Excede la entrada esperada es solo un digito del 1 al 9" << endl;
 			return false;
@@ -248,7 +253,8 @@ bool ValidarEntrada(string entrada, char tipo){ //true - es valida       false -
 				cout << "La entrada debe ser un caracter numerico del 1 al 9" << endl;
 				return false; //si no es un digito ni es el signo de '-'
 			}
-			if(entrada[0] - '0' < 1 && entrada[0] - '0' > 9 ) {
+			
+			if(entrada[0] - '0' < 1 ) { //valida el 0
 				cout << "La entrada debe ser un caracter numerico del 1 al 9" << endl;
 				return false; //si el digito no esta entre 1 y 9 retorna falso
 			}
@@ -267,7 +273,5 @@ bool ValidarEntrada(string entrada, char tipo){ //true - es valida       false -
 		}
 		
 		return true;
-	}
-		
+	}	
 }
-
